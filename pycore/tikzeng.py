@@ -35,20 +35,35 @@ def to_begin():
 
 # layers definition
 
-def to_input( pathfile, to='(-3,0,0)', width=8, height=8, name="temp" ):
+def to_input( pathfile, to='(-3,0,0)', width=40, height=40, name="temp", scale=0.2, caption=" " ):
     return r"""
-\node[canvas is zy plane at x=0] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width)+"cm"+""",height="""+ str(height)+"cm"+"""]{"""+ pathfile +"""}};
+\node[canvas is zy plane at x=0] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width*scale)+"cm"+""",height="""+ str(height*scale)+"cm"+"""]{"""+ pathfile +"""}};
+\coordinate (""" + name + """-east) at (""" + name + """.east);
+\coordinate (""" + name + """-west) at (""" + name + """.west);
+\coordinate (""" + name + """-north) at (""" + name + """.north);
+\coordinate (""" + name + """-south) at (""" + name + """.south);
+\\node[below=25pt, text centered, text width=""" + str(width*scale) + """cm] at (""" + name + """.south) {\small \\textcolor{black}{\\bf """ + caption + """}};
+"""
+
+def to_image( pathfile, offset="(0,0,0)", to="(0,0,0)", width=40, height=40, name="temp", scale=0.2, caption=" " ):
+    return r"""
+\node[shift={"""+ offset +"""}] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width*scale)+"cm"+""",height="""+ str(height*scale)+"cm"+"""]{"""+ pathfile +"""}};
+\coordinate (""" + name + """-east) at (""" + name + """.east);
+\coordinate (""" + name + """-west) at (""" + name + """.west);
+\coordinate (""" + name + """-north) at (""" + name + """.north);
+\coordinate (""" + name + """-south) at (""" + name + """.south);
+\\node[below=2pt, text centered, text width=""" + str(width*scale) + """cm] at (""" + name + """.south) {\small \\textcolor{black}{\\bf """ + caption + """}};
 """
 
 # Conv
-def to_Conv( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
+def to_Conv( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" ", show_labels=True ):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +""" 
     {Box={
         name=""" + name +""",
         caption="""+ caption +r""",
-        xlabel={{"""+ str(n_filer) +""", }},
-        zlabel="""+ str(s_filer) +""",
+        xlabel="""+ (("{{" + str(n_filer) + ", }}") if show_labels else "{{\" \", }}") +""",
+        zlabel="""+ (str(s_filer) if show_labels else "") +""",
         fill=\ConvColor,
         height="""+ str(height) +""",
         width="""+ str(width) +""",
@@ -59,14 +74,14 @@ def to_Conv( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", widt
 
 # Conv,Conv,relu
 # Bottleneck
-def to_ConvConvRelu( name, s_filer=256, n_filer=(64,64), offset="(0,0,0)", to="(0,0,0)", width=(2,2), height=40, depth=40, caption=" " ):
+def to_ConvConvRelu( name, s_filer=256, n_filer=(64,64), offset="(0,0,0)", to="(0,0,0)", width=(2,2), height=40, depth=40, caption=" ", show_labels=True ):
     return r"""
 \pic[shift={ """+ offset +""" }] at """+ to +""" 
     {RightBandedBox={
         name="""+ name +""",
         caption="""+ caption +""",
-        xlabel={{ """+ str(n_filer[0]) +""", """+ str(n_filer[1]) +""" }},
-        zlabel="""+ str(s_filer) +""",
+        xlabel="""+ (("{{" + str(n_filer[0]) + ", " + str(n_filer[1]) + " }}") if show_labels else "{{\" \", \" \"}}") +""",
+        zlabel="""+ (str(s_filer) if show_labels else "") +""",
         fill=\ConvColor,
         bandfill=\ConvReluColor,
         height="""+ str(height) +""",
@@ -112,14 +127,14 @@ def to_UnPool(name, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32
 
 
 
-def to_ConvRes( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=6, height=40, depth=40, opacity=0.2, caption=" " ):
+def to_ConvRes( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=6, height=40, depth=40, opacity=0.2, caption=" ", show_labels=True ):
     return r"""
 \pic[shift={ """+ offset +""" }] at """+ to +""" 
     {RightBandedBox={
         name="""+ name + """,
         caption="""+ caption + """,
-        xlabel={{ """+ str(n_filer) + """, }},
-        zlabel="""+ str(s_filer) +r""",
+        xlabel="""+ (("{{" + str(n_filer) + ", }}") if show_labels else "{{\" \", }}") +""",
+        zlabel="""+ (str(s_filer) if show_labels else "") +r""",
         fill={rgb:white,1;black,3},
         bandfill={rgb:white,1;black,2},
         opacity="""+ str(opacity) +""",
@@ -132,13 +147,13 @@ def to_ConvRes( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", w
 
 
 # ConvSoftMax
-def to_ConvSoftMax( name, s_filer=40, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
+def to_ConvSoftMax( name, s_filer=40, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" ", show_labels=True ):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +""" 
     {Box={
         name=""" + name +""",
         caption="""+ caption +""",
-        zlabel="""+ str(s_filer) +""",
+        zlabel="""+ (str(s_filer) if show_labels else "") +""",
         fill=\SoftmaxColor,
         height="""+ str(height) +""",
         width="""+ str(width) +""",
@@ -148,14 +163,14 @@ def to_ConvSoftMax( name, s_filer=40, offset="(0,0,0)", to="(0,0,0)", width=1, h
 """
 
 # SoftMax
-def to_SoftMax( name, s_filer=10, offset="(0,0,0)", to="(0,0,0)", width=1.5, height=3, depth=25, opacity=0.8, caption=" " ):
+def to_SoftMax( name, s_filer=10, offset="(0,0,0)", to="(0,0,0)", width=1.5, height=3, depth=25, opacity=0.8, caption=" ", show_labels=True ):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +""" 
     {Box={
         name=""" + name +""",
         caption="""+ caption +""",
         xlabel={{" ","dummy"}},
-        zlabel="""+ str(s_filer) +""",
+        zlabel="""+ (str(s_filer) if show_labels else "") +""",
         fill=\SoftmaxColor,
         opacity="""+ str(opacity) +""",
         height="""+ str(height) +""",
@@ -184,6 +199,11 @@ def to_connection( of, to):
 \draw [connection]  ("""+of+"""-east)    -- node {\midarrow} ("""+to+"""-west);
 """
 
+def to_connection_orthogonal( of, to, path="|-"):
+    return """
+\draw [connection]  ("""+of+""") -- node {\midarrow} ("""+of+path+to+""") -- node {\midarrow} ("""+to+""");
+"""
+
 def to_skip( of, to, pos=1.25):
     return r"""
 \path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
@@ -201,10 +221,11 @@ def to_end():
 """
 
 
-def to_generate( arch, pathname="file.tex" ):
+def to_generate( arch, pathname="file.tex", verbose=False ):
     with open(pathname, "w") as f: 
         for c in arch:
-            print(c)
+            if verbose:
+                print(c)
             f.write( c )
      
 

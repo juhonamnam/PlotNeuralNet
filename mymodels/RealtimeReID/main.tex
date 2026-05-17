@@ -1,0 +1,334 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{../../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\node[shift={(0,0,0)}] (input) at (0,0,0) {\includegraphics[width=4.0cm,height=12.0cm]{./input.jpg}};
+\coordinate (input-east) at (input.east);
+\coordinate (input-west) at (input.west);
+\coordinate (input-north) at (input.north);
+\coordinate (input-south) at (input.south);
+\node[below=2pt, text centered, text width=4.0cm] at (input.south) {\small \textcolor{black}{\bf Input Image}};
+
+\pic[shift={ (4,0,0) }] at (input-east) 
+    {RightBandedBox={
+        name=bb1,
+        caption= ,
+        xlabel={{" ", " "}},
+        zlabel=,
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=48,
+        width={ 2 , 2 },
+        depth=16
+        }
+    };
+
+\draw [connection]  (input-east)    -- node {\midarrow} (bb1-west);
+
+\pic[shift={ (2,0,0) }] at (bb1-east) 
+    {Box={
+        name=bb1-fm,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=48,
+        width=1,
+        depth=16
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (bb1-fm-east) 
+    {RightBandedBox={
+        name=bb2,
+        caption= ,
+        xlabel={{" ", " "}},
+        zlabel=,
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=36,
+        width={ 4 , 4 },
+        depth=12
+        }
+    };
+
+\draw [connection]  (bb1-east)    -- node {\midarrow} (bb2-west);
+
+\pic[shift={ (2,0,0) }] at (bb2-east) 
+    {Box={
+        name=bb2-fm,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=36,
+        width=2,
+        depth=12
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (bb2-fm-east) 
+    {RightBandedBox={
+        name=bb3,
+        caption= ,
+        xlabel={{" ", " "}},
+        zlabel=,
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=24,
+        width={ 8 , 8 },
+        depth=8
+        }
+    };
+
+\draw [connection]  (bb2-east)    -- node {\midarrow} (bb3-west);
+
+\pic[shift={ (2,0,0) }] at (bb3-east) 
+    {Box={
+        name=bb3-fm,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=24,
+        width=4,
+        depth=8
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (bb3-fm-east) 
+    {RightBandedBox={
+        name=bb4,
+        caption= ,
+        xlabel={{" ", " "}},
+        zlabel=,
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=12,
+        width={ 16 , 16 },
+        depth=4
+        }
+    };
+
+\draw [connection]  (bb3-east)    -- node {\midarrow} (bb4-west);
+
+\pic[shift={ (2,0,0) }] at (bb4-east) 
+    {Box={
+        name=bb4-fm,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=12,
+        width=8,
+        depth=4
+        }
+    };
+
+\draw [connection]  (bb4-east)    -- node {\midarrow} (bb4-fm-west);
+
+\pic[shift={ (2,8,0) }] at (bb4-fm-east) 
+    {RightBandedBox={
+        name=feature-conv,
+        caption= ,
+        xlabel={{" ", " "}},
+        zlabel=,
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=24,
+        width={ 4 , 4 },
+        depth=8
+        }
+    };
+
+\pic[shift={ (2,-8,0) }] at (bb4-fm-east) 
+    {RightBandedBox={
+        name=segment-conv,
+        caption= ,
+        xlabel={{" ", " "}},
+        zlabel=,
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height=24,
+        width={ 4 , 4 },
+        depth=8
+        }
+    };
+
+\draw [connection]  (bb1-fm-north) -- node {\midarrow} (bb1-fm-north|-feature-conv-west) -- node {\midarrow} (feature-conv-west);
+
+\draw [connection]  (bb2-fm-north) -- node {\midarrow} (bb2-fm-north|-feature-conv-west);
+
+\draw [connection]  (bb1-fm-south) -- node {\midarrow} (bb1-fm-south|-segment-conv-west) -- node {\midarrow} (segment-conv-west);
+
+\draw [connection]  (bb2-fm-south) -- node {\midarrow} (bb2-fm-south|-segment-conv-west);
+
+\draw [connection]  (bb3-fm-south) -- node {\midarrow} (bb3-fm-south|-segment-conv-west);
+
+\draw [connection]  (bb4-fm-south) -- node {\midarrow} (bb4-fm-south|-segment-conv-west);
+
+\pic[shift={ (2,0,0) }] at (feature-conv-east) 
+    {Box={
+        name=feature,
+        caption=Embedding Feature Map,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=24,
+        width=4,
+        depth=8
+        }
+    };
+
+\node[shift={(2,0,0)}] (segment) at (segment-conv-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./input.jpg}};
+\coordinate (segment-east) at (segment.east);
+\coordinate (segment-west) at (segment.west);
+\coordinate (segment-north) at (segment.north);
+\coordinate (segment-south) at (segment.south);
+\node[below=2pt, text centered, text width=1.6cm] at (segment.south) {\small \textcolor{black}{\bf Body Part Segmentation}};
+
+\draw [connection]  (feature-conv-east)    -- node {\midarrow} (feature-west);
+
+\draw [connection]  (segment-conv-east)    -- node {\midarrow} (segment-west);
+
+\node[shift={(16,16,0)}] (sg1) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./input.jpg}};
+\coordinate (sg1-east) at (sg1.east);
+\coordinate (sg1-west) at (sg1.west);
+\coordinate (sg1-north) at (sg1.north);
+\coordinate (sg1-south) at (sg1.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sg1.south) {\small \textcolor{black}{\bf Head}};
+
+\node[shift={(16,8,0)}] (sg2) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./input.jpg}};
+\coordinate (sg2-east) at (sg2.east);
+\coordinate (sg2-west) at (sg2.west);
+\coordinate (sg2-north) at (sg2.north);
+\coordinate (sg2-south) at (sg2.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sg2.south) {\small \textcolor{black}{\bf Torso}};
+
+\node[shift={(16,0,0)}] (sg3) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./input.jpg}};
+\coordinate (sg3-east) at (sg3.east);
+\coordinate (sg3-west) at (sg3.west);
+\coordinate (sg3-north) at (sg3.north);
+\coordinate (sg3-south) at (sg3.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sg3.south) {\small \textcolor{black}{\bf Arms}};
+
+\node[shift={(16,-8,0)}] (sg4) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./input.jpg}};
+\coordinate (sg4-east) at (sg4.east);
+\coordinate (sg4-west) at (sg4.west);
+\coordinate (sg4-north) at (sg4.north);
+\coordinate (sg4-south) at (sg4.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sg4.south) {\small \textcolor{black}{\bf Upper Legs}};
+
+\node[shift={(16,-16,0)}] (sg5) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./input.jpg}};
+\coordinate (sg5-east) at (sg5.east);
+\coordinate (sg5-west) at (sg5.west);
+\coordinate (sg5-north) at (sg5.north);
+\coordinate (sg5-south) at (sg5.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sg5.south) {\small \textcolor{black}{\bf Lower Legs}};
+
+\draw [connection]  (segment-east)    -- node {\midarrow} (sg1-west);
+
+\draw [connection]  (segment-east)    -- node {\midarrow} (sg2-west);
+
+\draw [connection]  (segment-east)    -- node {\midarrow} (sg3-west);
+
+\draw [connection]  (segment-east)    -- node {\midarrow} (sg4-west);
+
+\draw [connection]  (segment-east)    -- node {\midarrow} (sg5-west);
+
+\draw [connection]  (feature-east)    -- node {\midarrow} (sg1-west);
+
+\draw [connection]  (feature-east)    -- node {\midarrow} (sg2-west);
+
+\draw [connection]  (feature-east)    -- node {\midarrow} (sg3-west);
+
+\draw [connection]  (feature-east)    -- node {\midarrow} (sg4-west);
+
+\draw [connection]  (feature-east)    -- node {\midarrow} (sg5-west);
+
+\pic[shift={ (2,0,0) }] at (sg1-east) 
+    {Box={
+        name=emb1,
+        caption= ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (sg2-east) 
+    {Box={
+        name=emb2,
+        caption= ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (sg3-east) 
+    {Box={
+        name=emb3,
+        caption= ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (sg4-east) 
+    {Box={
+        name=emb4,
+        caption= ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (sg5-east) 
+    {Box={
+        name=emb5,
+        caption= ,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=1,
+        width=8,
+        depth=1
+        }
+    };
+
+\draw [connection]  (sg1-east)    -- node {\midarrow} (emb1-west);
+
+\draw [connection]  (sg2-east)    -- node {\midarrow} (emb2-west);
+
+\draw [connection]  (sg3-east)    -- node {\midarrow} (emb3-west);
+
+\draw [connection]  (sg4-east)    -- node {\midarrow} (emb4-west);
+
+\draw [connection]  (sg5-east)    -- node {\midarrow} (emb5-west);
+
+\end{tikzpicture}
+\end{document}
