@@ -26,6 +26,7 @@ def to_cor():
 def to_begin():
     return r"""
 \newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+\newcommand{\midarrowtwo}{\tikz \draw[Stealth-Stealth,line width=0.8mm,draw=\edgecolor] (-0.3,0) -- ++(0.3,0);}
 
 \begin{document}
 \begin{tikzpicture}
@@ -196,12 +197,17 @@ def to_Sum( name, offset="(0,0,0)", to="(0,0,0)", radius=2.5, opacity=0.6):
 
 def to_connection( of, to):
     return r"""
-\draw [connection]  ("""+of+"""-east)    -- node {\midarrow} ("""+to+"""-west);
+\draw [connection]  ("""+of+""")    -- node {\midarrow} ("""+to+""");
 """
 
 def to_connection_orthogonal( of, to, path="|-"):
     return """
 \draw [connection]  ("""+of+""") -- node {\midarrow} ("""+of+path+to+""") -- node {\midarrow} ("""+to+""");
+"""
+
+def to_connection_double( of, to):
+    return r"""
+\draw [connection]  ("""+of+""")    -- node {\midarrowtwo} ("""+to+""");
 """
 
 def to_skip( of, to, pos=1.25):

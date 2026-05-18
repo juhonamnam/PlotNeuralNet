@@ -1,0 +1,220 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{../../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\ConvColor{rgb:yellow,5;red,2.5;white,5}
+\def\ConvReluColor{rgb:yellow,5;red,5;white,5}
+\def\PoolColor{rgb:red,1;black,0.3}
+\def\UnpoolColor{rgb:blue,2;green,1;black,0.3}
+\def\FcColor{rgb:blue,5;red,2.5;white,5}
+\def\FcReluColor{rgb:blue,5;red,5;white,4}
+\def\SoftmaxColor{rgb:magenta,5;black,7}   
+\def\SumColor{rgb:blue,5;green,15}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+\newcommand{\midarrowtwo}{\tikz \draw[Stealth-Stealth,line width=0.8mm,draw=\edgecolor] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\node[shift={(0,0,0)}] (input1) at (0,0,0) {\includegraphics[width=4.0cm,height=12.0cm]{./input.jpg}};
+\coordinate (input1-east) at (input1.east);
+\coordinate (input1-west) at (input1.west);
+\coordinate (input1-north) at (input1.north);
+\coordinate (input1-south) at (input1.south);
+\node[below=2pt, text centered, text width=4.0cm] at (input1.south) {\small \textcolor{black}{\bf  }};
+
+\pic[shift={(3,0,0)}] at (input1-east) 
+    {Box={
+        name=model1,
+        caption=ReID Model,
+        xlabel={{" ", }},
+        zlabel=,
+        fill=\ConvColor,
+        height=16,
+        width=24,
+        depth=16
+        }
+    };
+
+\draw [connection]  (input1-east)    -- node {\midarrow} (model1-west);
+
+\pic[shift={ (5,6,0) }] at (model1-east) 
+    {Box={
+        name=emb11,
+        caption=Head,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (5,3,0) }] at (model1-east) 
+    {Box={
+        name=emb12,
+        caption=Torso,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (5,0,0) }] at (model1-east) 
+    {Box={
+        name=emb13,
+        caption=Arms,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (5,-3,0) }] at (model1-east) 
+    {Box={
+        name=emb14,
+        caption=Upper Legs,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (5,-6,0) }] at (model1-east) 
+    {Box={
+        name=emb15,
+        caption=Lower Legs,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\draw [connection]  (model1-east)    -- node {\midarrow} (emb11-west);
+
+\draw [connection]  (model1-east)    -- node {\midarrow} (emb12-west);
+
+\draw [connection]  (model1-east)    -- node {\midarrow} (emb13-west);
+
+\draw [connection]  (model1-east)    -- node {\midarrow} (emb14-west);
+
+\draw [connection]  (model1-east)    -- node {\midarrow} (emb15-west);
+
+\pic[shift={ (10,0,0) }] at (emb11-east) 
+    {Box={
+        name=emb21,
+        caption=Head,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (10,0,0) }] at (emb12-east) 
+    {Box={
+        name=emb22,
+        caption=Torso,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (10,0,0) }] at (emb13-east) 
+    {Box={
+        name=emb23,
+        caption=Arms,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (10,0,0) }] at (emb14-east) 
+    {Box={
+        name=emb24,
+        caption=Upper Legs,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\pic[shift={ (10,0,0) }] at (emb15-east) 
+    {Box={
+        name=emb25,
+        caption=Lower Legs,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
+
+\draw [connection]  (emb11-east)    -- node {\midarrowtwo} (emb21-west);
+
+\draw [connection]  (emb12-east)    -- node {\midarrowtwo} (emb22-west);
+
+\draw [connection]  (emb13-east)    -- node {\midarrowtwo} (emb23-west);
+
+\draw [connection]  (emb14-east)    -- node {\midarrowtwo} (emb24-west);
+
+\draw [connection]  (emb15-east)    -- node {\midarrowtwo} (emb25-west);
+
+\pic[shift={(5,0,0)}] at (emb23-east) 
+    {Box={
+        name=model2,
+        caption=ReID Model,
+        xlabel={{" ", }},
+        zlabel=,
+        fill=\ConvColor,
+        height=16,
+        width=24,
+        depth=16
+        }
+    };
+
+\draw [connection]  (model2-west)    -- node {\midarrow} (emb21-east);
+
+\draw [connection]  (model2-west)    -- node {\midarrow} (emb22-east);
+
+\draw [connection]  (model2-west)    -- node {\midarrow} (emb23-east);
+
+\draw [connection]  (model2-west)    -- node {\midarrow} (emb24-east);
+
+\draw [connection]  (model2-west)    -- node {\midarrow} (emb25-east);
+
+\node[shift={(5,0,0)}] (input2) at (model2-east) {\includegraphics[width=4.0cm,height=12.0cm]{./input2.jpg}};
+\coordinate (input2-east) at (input2.east);
+\coordinate (input2-west) at (input2.west);
+\coordinate (input2-north) at (input2.north);
+\coordinate (input2-south) at (input2.south);
+\node[below=2pt, text centered, text width=4.0cm] at (input2.south) {\small \textcolor{black}{\bf  }};
+
+\draw [connection]  (input2-west)    -- node {\midarrow} (model2-east);
+
+\end{tikzpicture}
+\end{document}
