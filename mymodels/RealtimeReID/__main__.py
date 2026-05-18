@@ -68,12 +68,14 @@ arch = [
     to_connection( "bb4", "bb4-fm"),
 
     to_ConvConvRelu(name='feature-conv', offset="(2,-8,0)",
-                    to="(bb4-fm-east)", width=(4,4), height=24,
-                    depth=8, show_labels=False),
+                    to="(bb4-fm-east)", width=(6,6), height=24,
+                    depth=8, show_labels=False,
+                    caption="FPN + Conv"),
 
     to_ConvConvRelu(name='segment-conv', offset="(2,8,0)",
-                    to="(bb4-fm-east)", width=(4,4), height=24,
-                    depth=8, show_labels=False),
+                    to="(bb4-fm-east)", width=(6,6), height=24,
+                    depth=8, show_labels=False,
+                    caption="FPN + Conv"),
 
     to_merge_connection(["bb1-fm-south", "bb2-fm-south"],
                         "feature-conv-west", path="|-"),
