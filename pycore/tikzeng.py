@@ -45,9 +45,9 @@ def to_input( pathfile, to='(-3,0,0)', width=40, height=40, name="temp", scale=0
 \\node[below=25pt, text centered, text width=""" + str(width*scale) + """cm] at (""" + name + """.south) {\small \\textcolor{black}{\\bf """ + caption + """}};
 """
 
-def to_image( pathfile, offset="(0,0,0)", to="(0,0,0)", width=40, height=40, name="temp", scale=0.2, caption=" " ):
+def to_image( pathfile, offset="(0,0,0)", to="(0,0,0)", width=40, height=40, name="temp", scale=0.2, caption=" ", border=None ):
     return r"""
-\node[shift={"""+ offset +"""}] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width*scale)+"cm"+""",height="""+ str(height*scale)+"cm"+"""]{"""+ pathfile +"""}};
+\node[shift={"""+ offset +"""}"""+ ( (",draw=" + border + ",inner sep=0") if border else "" ) +"""] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width*scale)+"cm"+""",height="""+ str(height*scale)+"cm"+"""]{"""+ pathfile +"""}};
 \coordinate (""" + name + """-east) at (""" + name + """.east);
 \coordinate (""" + name + """-west) at (""" + name + """.west);
 \coordinate (""" + name + """-north) at (""" + name + """.north);
