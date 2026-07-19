@@ -195,9 +195,9 @@ def to_Sum( name, offset="(0,0,0)", to="(0,0,0)", radius=2.5, opacity=0.6):
 """
 
 
-def to_connection( of, to):
+def to_connection( of, to, midarrow=True):
     return r"""
-\draw [connection]  ("""+of+""")    -- node {\midarrow} ("""+to+""");
+\draw [connection]  ("""+of+""") -- """+("node {\midarrow}" if midarrow else "")+""" ("""+to+""");
 """
 
 def to_connection_orthogonal( of, to, path="|-"):
@@ -212,12 +212,11 @@ def to_connection_double( of, to):
 
 def to_skip( of, to, pos=1.25):
     return r"""
-\path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
-\path ("""+ to +"""-south)  -- ("""+ to +"""-north)  coordinate[pos="""+ str(pos) +"""] ("""+ to +"""-top) ;
-\draw [copyconnection]  ("""+of+"""-northeast)  
--- node {\copymidarrow}("""+of+"""-top)
--- node {\copymidarrow}("""+to+"""-top)
--- node {\copymidarrow} ("""+to+"""-north);
+\path ("""+ of +"""-south) -- ("""+ of +"""-north) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
+\draw [copyconnection]  ("""+of+"""-north)  
+-- ("""+of+"""-top)
+-- node {\copymidarrow}("""+of+"""-top-|"""+to+"""-north)
+-- ("""+to+"""-north);
 """
 
 def to_end():

@@ -43,21 +43,9 @@
         }
     };
 
-\draw [connection]  (input-east)    -- node {\midarrow} (bb1-west);
+\draw [connection]  (input-east) -- node {\midarrow} (bb1-west);
 
 \pic[shift={ (2,0,0) }] at (bb1-east) 
-    {Box={
-        name=bb1-fm,
-        caption=Feature Map 1,
-        fill=\PoolColor,
-        opacity=0.5,
-        height=48,
-        width=1,
-        depth=16
-        }
-    };
-
-\pic[shift={ (2,0,0) }] at (bb1-fm-east) 
     {RightBandedBox={
         name=bb2,
         caption=Conv,
@@ -71,12 +59,12 @@
         }
     };
 
-\draw [connection]  (bb1-east)    -- node {\midarrow} (bb2-west);
+\draw [connection]  (bb1-east) -- node {\midarrow} (bb2-west);
 
 \pic[shift={ (2,0,0) }] at (bb2-east) 
     {Box={
         name=bb2-fm,
-        caption=Feature Map 2,
+        caption=Feature Map 1,
         fill=\PoolColor,
         opacity=0.5,
         height=36,
@@ -99,12 +87,12 @@
         }
     };
 
-\draw [connection]  (bb2-east)    -- node {\midarrow} (bb3-west);
+\draw [connection]  (bb2-east) -- node {\midarrow} (bb3-west);
 
 \pic[shift={ (2,0,0) }] at (bb3-east) 
     {Box={
         name=bb3-fm,
-        caption=Feature Map 3,
+        caption=Feature Map 2,
         fill=\PoolColor,
         opacity=0.5,
         height=24,
@@ -127,12 +115,12 @@
         }
     };
 
-\draw [connection]  (bb3-east)    -- node {\midarrow} (bb4-west);
+\draw [connection]  (bb3-east) -- node {\midarrow} (bb4-west);
 
 \pic[shift={ (2,0,0) }] at (bb4-east) 
     {Box={
         name=bb4-fm,
-        caption=Feature Map 4,
+        caption=Feature Map 3,
         fill=\PoolColor,
         opacity=0.5,
         height=12,
@@ -141,11 +129,45 @@
         }
     };
 
-\draw [connection]  (bb4-east)    -- node {\midarrow} (bb4-fm-west);
+\draw [connection]  (bb4-east) -- node {\midarrow} (bb4-fm-west);
 
-\pic[shift={ (2,-8,0) }] at (bb4-fm-east) 
+\pic[shift={(1,0,0)}] at (bb4-fm-east) 
+    {Ball={
+        name=fm-merge,
+        fill=\SumColor,
+        opacity=0.6,
+        radius=2.5,
+        logo=$+$
+        }
+    };
+
+\path (bb2-fm-south) -- (bb2-fm-north) coordinate[pos=1.25] (bb2-fm-top) ;
+\draw [copyconnection]  (bb2-fm-north)  
+-- (bb2-fm-top)
+-- node {\copymidarrow}(bb2-fm-top-|fm-merge-north)
+-- (fm-merge-north);
+
+\path (bb3-fm-south) -- (bb3-fm-north) coordinate[pos=1.25] (bb3-fm-top) ;
+\draw [copyconnection]  (bb3-fm-north)  
+-- (bb3-fm-top)
+-- node {\copymidarrow}(bb3-fm-top-|fm-merge-north)
+-- (fm-merge-north);
+
+\pic[shift={ (2,0,0) }] at (bb4-east) 
+    {Box={
+        name=bb4-fm,
+        caption= ,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=12,
+        width=8,
+        depth=4
+        }
+    };
+
+\pic[shift={ (2,0,0) }] at (bb4-fm-east) 
     {RightBandedBox={
-        name=feature-conv,
+        name=fpn,
         caption=FPN + Conv,
         xlabel={{" ", " "}},
         zlabel=,
@@ -157,33 +179,9 @@
         }
     };
 
-\pic[shift={ (2,8,0) }] at (bb4-fm-east) 
-    {RightBandedBox={
-        name=segment-conv,
-        caption=FPN + Conv,
-        xlabel={{" ", " "}},
-        zlabel=,
-        fill=\ConvColor,
-        bandfill=\ConvReluColor,
-        height=24,
-        width={ 6 , 6 },
-        depth=8
-        }
-    };
+\draw [connection]  (bb4-fm-east) --  (fpn-west);
 
-\draw [connection]  (bb1-fm-south) -- node {\midarrow} (bb1-fm-south|-feature-conv-west) -- node {\midarrow} (feature-conv-west);
-
-\draw [connection]  (bb2-fm-south) -- node {\midarrow} (bb2-fm-south|-feature-conv-west);
-
-\draw [connection]  (bb1-fm-north) -- node {\midarrow} (bb1-fm-north|-segment-conv-west) -- node {\midarrow} (segment-conv-west);
-
-\draw [connection]  (bb2-fm-north) -- node {\midarrow} (bb2-fm-north|-segment-conv-west);
-
-\draw [connection]  (bb3-fm-north) -- node {\midarrow} (bb3-fm-north|-segment-conv-west);
-
-\draw [connection]  (bb4-fm-north) -- node {\midarrow} (bb4-fm-north|-segment-conv-west);
-
-\pic[shift={ (2,0,0) }] at (feature-conv-east) 
+\pic[shift={ (3,-8,0) }] at (fpn-east) 
     {Box={
         name=feature,
         caption=Embedding Feature Map,
@@ -195,99 +193,117 @@
         }
     };
 
-\node[shift={(3,0.4,-1)},draw=black, thick,inner sep=0] (sgt1) at (segment-conv-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./lowerlegs.png}};
+\node[shift={(3,8.5,-1)},draw=black, thick,inner sep=0] (sgt1) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./lowerleg.png}};
 \coordinate (sgt1-east) at (sgt1.east);
 \coordinate (sgt1-west) at (sgt1.west);
 \coordinate (sgt1-north) at (sgt1.north);
 \coordinate (sgt1-south) at (sgt1.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sgt1.south) {\small \textcolor{black}{\bf  }};
 
-\node[shift={(3,0.2,-0.5)},draw=black, thick,inner sep=0] (sgt2) at (segment-conv-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./upperlegs.png}};
+\node[shift={(3,8.3,-0.5)},draw=black, thick,inner sep=0] (sgt2) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./upperleg.png}};
 \coordinate (sgt2-east) at (sgt2.east);
 \coordinate (sgt2-west) at (sgt2.west);
 \coordinate (sgt2-north) at (sgt2.north);
 \coordinate (sgt2-south) at (sgt2.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sgt2.south) {\small \textcolor{black}{\bf  }};
 
-\node[shift={(3,0,0)},draw=black, thick,inner sep=0] (sgt3) at (segment-conv-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./arms.png}};
+\node[shift={(3,8.1,0)},draw=black, thick,inner sep=0] (sgt3) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./arm.png}};
 \coordinate (sgt3-east) at (sgt3.east);
 \coordinate (sgt3-west) at (sgt3.west);
 \coordinate (sgt3-north) at (sgt3.north);
 \coordinate (sgt3-south) at (sgt3.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sgt3.south) {\small \textcolor{black}{\bf  }};
 
-\node[shift={(3,-0.2,0.5)},draw=black, thick,inner sep=0] (sgt4) at (segment-conv-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./torso.png}};
+\node[shift={(3,7.9,0.5)},draw=black, thick,inner sep=0] (sgt4) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./torso.png}};
 \coordinate (sgt4-east) at (sgt4.east);
 \coordinate (sgt4-west) at (sgt4.west);
 \coordinate (sgt4-north) at (sgt4.north);
 \coordinate (sgt4-south) at (sgt4.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sgt4.south) {\small \textcolor{black}{\bf  }};
 
-\node[shift={(3,-0.4,1)},draw=black, thick,inner sep=0] (sgt5) at (segment-conv-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./head.png}};
+\node[shift={(3,7.7,1)},draw=black, thick,inner sep=0] (sgt5) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./head.png}};
 \coordinate (sgt5-east) at (sgt5.east);
 \coordinate (sgt5-west) at (sgt5.west);
 \coordinate (sgt5-north) at (sgt5.north);
 \coordinate (sgt5-south) at (sgt5.south);
-\node[below=2pt, text centered, text width=1.6cm] at (sgt5.south) {\small \textcolor{black}{\bf Body Part Segmentation}};
+\node[below=2pt, text centered, text width=1.6cm] at (sgt5.south) {\small \textcolor{black}{\bf  }};
 
-\draw [connection]  (feature-conv-east)    -- node {\midarrow} (feature-west);
+\node[shift={(3,7.5,1)},draw=black, thick,inner sep=0] (sgt6) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./wholebody.png}};
+\coordinate (sgt6-east) at (sgt6.east);
+\coordinate (sgt6-west) at (sgt6.west);
+\coordinate (sgt6-north) at (sgt6.north);
+\coordinate (sgt6-south) at (sgt6.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sgt6.south) {\small \textcolor{black}{\bf Body Part Attention}};
 
-\draw [connection]  (segment-conv-east)    -- node {\midarrow} (sgt3-west);
+\draw [connection]  (fpn-east) -- node {\midarrow} (feature-west);
 
-\node[shift={(16,16,0)},draw=black, thick,inner sep=0] (sg1) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./head.png}};
+\draw [connection]  (fpn-east) -- node {\midarrow} (sgt3-west);
+
+\node[shift={(16,20,0)},draw=black, thick,inner sep=0] (sg1) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./head.png}};
 \coordinate (sg1-east) at (sg1.east);
 \coordinate (sg1-west) at (sg1.west);
 \coordinate (sg1-north) at (sg1.north);
 \coordinate (sg1-south) at (sg1.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sg1.south) {\small \textcolor{black}{\bf Head}};
 
-\node[shift={(16,8,0)},draw=black, thick,inner sep=0] (sg2) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./torso.png}};
+\node[shift={(16,12,0)},draw=black, thick,inner sep=0] (sg2) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./torso.png}};
 \coordinate (sg2-east) at (sg2.east);
 \coordinate (sg2-west) at (sg2.west);
 \coordinate (sg2-north) at (sg2.north);
 \coordinate (sg2-south) at (sg2.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sg2.south) {\small \textcolor{black}{\bf Torso}};
 
-\node[shift={(16,0,0)},draw=black, thick,inner sep=0] (sg3) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./arms.png}};
+\node[shift={(16,4,0)},draw=black, thick,inner sep=0] (sg3) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./arm.png}};
 \coordinate (sg3-east) at (sg3.east);
 \coordinate (sg3-west) at (sg3.west);
 \coordinate (sg3-north) at (sg3.north);
 \coordinate (sg3-south) at (sg3.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sg3.south) {\small \textcolor{black}{\bf Arms}};
 
-\node[shift={(16,-8,0)},draw=black, thick,inner sep=0] (sg4) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./upperlegs.png}};
+\node[shift={(16,-4,0)},draw=black, thick,inner sep=0] (sg4) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./upperleg.png}};
 \coordinate (sg4-east) at (sg4.east);
 \coordinate (sg4-west) at (sg4.west);
 \coordinate (sg4-north) at (sg4.north);
 \coordinate (sg4-south) at (sg4.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sg4.south) {\small \textcolor{black}{\bf Upper Legs}};
 
-\node[shift={(16,-16,0)},draw=black, thick,inner sep=0] (sg5) at (bb4-fm-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./lowerlegs.png}};
+\node[shift={(16,-12,0)},draw=black, thick,inner sep=0] (sg5) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./lowerleg.png}};
 \coordinate (sg5-east) at (sg5.east);
 \coordinate (sg5-west) at (sg5.west);
 \coordinate (sg5-north) at (sg5.north);
 \coordinate (sg5-south) at (sg5.south);
 \node[below=2pt, text centered, text width=1.6cm] at (sg5.south) {\small \textcolor{black}{\bf Lower Legs}};
 
-\draw [connection]  (sgt1-east)    -- node {\midarrow} (sg1-west);
+\node[shift={(16,-20,0)},draw=black, thick,inner sep=0] (sg6) at (fpn-east) {\includegraphics[width=1.6cm,height=4.800000000000001cm]{./wholebody.png}};
+\coordinate (sg6-east) at (sg6.east);
+\coordinate (sg6-west) at (sg6.west);
+\coordinate (sg6-north) at (sg6.north);
+\coordinate (sg6-south) at (sg6.south);
+\node[below=2pt, text centered, text width=1.6cm] at (sg6.south) {\small \textcolor{black}{\bf Whole Body}};
 
-\draw [connection]  (sgt1-east)    -- node {\midarrow} (sg2-west);
+\draw [connection]  (sgt1-east) -- node {\midarrow} (sg1-west);
 
-\draw [connection]  (sgt1-east)    -- node {\midarrow} (sg3-west);
+\draw [connection]  (sgt1-east) -- node {\midarrow} (sg2-west);
 
-\draw [connection]  (sgt1-east)    -- node {\midarrow} (sg4-west);
+\draw [connection]  (sgt1-east) -- node {\midarrow} (sg3-west);
 
-\draw [connection]  (sgt1-east)    -- node {\midarrow} (sg5-west);
+\draw [connection]  (sgt1-east) -- node {\midarrow} (sg4-west);
 
-\draw [connection]  (feature-east)    -- node {\midarrow} (sg1-west);
+\draw [connection]  (sgt1-east) -- node {\midarrow} (sg5-west);
 
-\draw [connection]  (feature-east)    -- node {\midarrow} (sg2-west);
+\draw [connection]  (sgt1-east) -- node {\midarrow} (sg6-west);
 
-\draw [connection]  (feature-east)    -- node {\midarrow} (sg3-west);
+\draw [connection]  (feature-east) -- node {\midarrow} (sg1-west);
 
-\draw [connection]  (feature-east)    -- node {\midarrow} (sg4-west);
+\draw [connection]  (feature-east) -- node {\midarrow} (sg2-west);
 
-\draw [connection]  (feature-east)    -- node {\midarrow} (sg5-west);
+\draw [connection]  (feature-east) -- node {\midarrow} (sg3-west);
+
+\draw [connection]  (feature-east) -- node {\midarrow} (sg4-west);
+
+\draw [connection]  (feature-east) -- node {\midarrow} (sg5-west);
+
+\draw [connection]  (feature-east) -- node {\midarrow} (sg6-west);
 
 \pic[shift={ (2,0,0) }] at (sg1-east) 
     {Box={
@@ -349,15 +365,29 @@
         }
     };
 
-\draw [connection]  (sg1-east)    -- node {\midarrow} (emb1-west);
+\pic[shift={ (2,0,0) }] at (sg6-east) 
+    {Box={
+        name=emb6,
+        caption=Embedding 6,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
 
-\draw [connection]  (sg2-east)    -- node {\midarrow} (emb2-west);
+\draw [connection]  (sg1-east) -- node {\midarrow} (emb1-west);
 
-\draw [connection]  (sg3-east)    -- node {\midarrow} (emb3-west);
+\draw [connection]  (sg2-east) -- node {\midarrow} (emb2-west);
 
-\draw [connection]  (sg4-east)    -- node {\midarrow} (emb4-west);
+\draw [connection]  (sg3-east) -- node {\midarrow} (emb3-west);
 
-\draw [connection]  (sg5-east)    -- node {\midarrow} (emb5-west);
+\draw [connection]  (sg4-east) -- node {\midarrow} (emb4-west);
+
+\draw [connection]  (sg5-east) -- node {\midarrow} (emb5-west);
+
+\draw [connection]  (sg6-east) -- node {\midarrow} (emb6-west);
 
 \end{tikzpicture}
 \end{document}

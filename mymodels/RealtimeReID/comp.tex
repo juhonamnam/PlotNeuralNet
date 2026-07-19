@@ -42,9 +42,9 @@
         }
     };
 
-\draw [connection]  (input1-east)    -- node {\midarrow} (model1-west);
+\draw [connection]  (input1-east) -- node {\midarrow} (model1-west);
 
-\pic[shift={ (5,6,0) }] at (model1-east) 
+\pic[shift={ (5,10,0) }] at (model1-east) 
     {Box={
         name=emb11,
         caption=Head,
@@ -56,7 +56,7 @@
         }
     };
 
-\pic[shift={ (5,3,0) }] at (model1-east) 
+\pic[shift={ (5,6,0) }] at (model1-east) 
     {Box={
         name=emb12,
         caption=Torso,
@@ -68,7 +68,7 @@
         }
     };
 
-\pic[shift={ (5,0,0) }] at (model1-east) 
+\pic[shift={ (5,2,0) }] at (model1-east) 
     {Box={
         name=emb13,
         caption=Arms,
@@ -80,7 +80,7 @@
         }
     };
 
-\pic[shift={ (5,-3,0) }] at (model1-east) 
+\pic[shift={ (5,-2,0) }] at (model1-east) 
     {Box={
         name=emb14,
         caption=Upper Legs,
@@ -104,17 +104,93 @@
         }
     };
 
-\draw [connection]  (model1-east)    -- node {\midarrow} (emb11-west);
+\pic[shift={ (5,-10,0) }] at (model1-east) 
+    {Box={
+        name=emb16,
+        caption=Whole Body,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
 
-\draw [connection]  (model1-east)    -- node {\midarrow} (emb12-west);
+\draw [connection]  (model1-east) -- node {\midarrow} (emb11-west);
 
-\draw [connection]  (model1-east)    -- node {\midarrow} (emb13-west);
+\draw [connection]  (model1-east) -- node {\midarrow} (emb12-west);
 
-\draw [connection]  (model1-east)    -- node {\midarrow} (emb14-west);
+\draw [connection]  (model1-east) -- node {\midarrow} (emb13-west);
 
-\draw [connection]  (model1-east)    -- node {\midarrow} (emb15-west);
+\draw [connection]  (model1-east) -- node {\midarrow} (emb14-west);
 
-\pic[shift={ (10,0,0) }] at (emb11-east) 
+\draw [connection]  (model1-east) -- node {\midarrow} (emb15-west);
+
+\draw [connection]  (model1-east) -- node {\midarrow} (emb16-west);
+
+\pic[shift={(10,0,0)}] at (model1-east) 
+    {Ball={
+        name=concat1,
+        fill=\SumColor,
+        opacity=0.6,
+        radius=2.5,
+        logo=$+$
+        }
+    };
+
+\draw [connection]  (emb11-east) -- node {\midarrow} (concat1-west);
+
+\draw [connection]  (emb12-east) -- node {\midarrow} (concat1-west);
+
+\draw [connection]  (emb13-east) -- node {\midarrow} (concat1-west);
+
+\draw [connection]  (emb14-east) -- node {\midarrow} (concat1-west);
+
+\draw [connection]  (emb15-east) -- node {\midarrow} (concat1-west);
+
+\draw [connection]  (emb16-east) -- node {\midarrow} (concat1-west);
+
+\pic[shift={ (3,0,0) }] at (concat1-east) 
+    {Box={
+        name=concat1-emb,
+        caption=Concat Feat,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=24
+        }
+    };
+
+\draw [connection]  (concat1-east) -- node {\midarrow} (concat1-emb-west);
+
+\pic[shift={ (6,0,0) }] at (concat1-emb-east) 
+    {Box={
+        name=concat2-emb,
+        caption=Concat Feat,
+        fill=\PoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=24
+        }
+    };
+
+\draw [connection]  (concat1-emb-east)    -- node {\midarrowtwo} (concat2-emb-west);
+
+\pic[shift={(3,0,0)}] at (concat2-emb-east) 
+    {Ball={
+        name=concat2,
+        fill=\SumColor,
+        opacity=0.6,
+        radius=2.5,
+        logo=$+$
+        }
+    };
+
+\draw [connection]  (concat2-west) -- node {\midarrow} (concat2-emb-east);
+
+\pic[shift={ (5,10,0) }] at (concat2-east) 
     {Box={
         name=emb21,
         caption=Head,
@@ -126,7 +202,7 @@
         }
     };
 
-\pic[shift={ (10,0,0) }] at (emb12-east) 
+\pic[shift={ (5,6,0) }] at (concat2-east) 
     {Box={
         name=emb22,
         caption=Torso,
@@ -138,7 +214,7 @@
         }
     };
 
-\pic[shift={ (10,0,0) }] at (emb13-east) 
+\pic[shift={ (5,2,0) }] at (concat2-east) 
     {Box={
         name=emb23,
         caption=Arms,
@@ -150,7 +226,7 @@
         }
     };
 
-\pic[shift={ (10,0,0) }] at (emb14-east) 
+\pic[shift={ (5,-2,0) }] at (concat2-east) 
     {Box={
         name=emb24,
         caption=Upper Legs,
@@ -162,7 +238,7 @@
         }
     };
 
-\pic[shift={ (10,0,0) }] at (emb15-east) 
+\pic[shift={ (5,-6,0) }] at (concat2-east) 
     {Box={
         name=emb25,
         caption=Lower Legs,
@@ -174,17 +250,31 @@
         }
     };
 
-\draw [connection]  (emb11-east)    -- node {\midarrowtwo} (emb21-west);
+\pic[shift={ (5,-10,0) }] at (concat2-east) 
+    {Box={
+        name=emb26,
+        caption=Whole Body,
+        fill=\UnpoolColor,
+        opacity=0.5,
+        height=2,
+        width=2,
+        depth=18
+        }
+    };
 
-\draw [connection]  (emb12-east)    -- node {\midarrowtwo} (emb22-west);
+\draw [connection]  (emb21-west) -- node {\midarrow} (concat2-east);
 
-\draw [connection]  (emb13-east)    -- node {\midarrowtwo} (emb23-west);
+\draw [connection]  (emb22-west) -- node {\midarrow} (concat2-east);
 
-\draw [connection]  (emb14-east)    -- node {\midarrowtwo} (emb24-west);
+\draw [connection]  (emb23-west) -- node {\midarrow} (concat2-east);
 
-\draw [connection]  (emb15-east)    -- node {\midarrowtwo} (emb25-west);
+\draw [connection]  (emb24-west) -- node {\midarrow} (concat2-east);
 
-\pic[shift={(5,0,0)}] at (emb23-east) 
+\draw [connection]  (emb25-west) -- node {\midarrow} (concat2-east);
+
+\draw [connection]  (emb26-west) -- node {\midarrow} (concat2-east);
+
+\pic[shift={(10,0,0)}] at (concat2-east) 
     {Box={
         name=model2,
         caption=ReID Model,
@@ -197,15 +287,17 @@
         }
     };
 
-\draw [connection]  (model2-west)    -- node {\midarrow} (emb21-east);
+\draw [connection]  (model2-west) -- node {\midarrow} (emb21-east);
 
-\draw [connection]  (model2-west)    -- node {\midarrow} (emb22-east);
+\draw [connection]  (model2-west) -- node {\midarrow} (emb22-east);
 
-\draw [connection]  (model2-west)    -- node {\midarrow} (emb23-east);
+\draw [connection]  (model2-west) -- node {\midarrow} (emb23-east);
 
-\draw [connection]  (model2-west)    -- node {\midarrow} (emb24-east);
+\draw [connection]  (model2-west) -- node {\midarrow} (emb24-east);
 
-\draw [connection]  (model2-west)    -- node {\midarrow} (emb25-east);
+\draw [connection]  (model2-west) -- node {\midarrow} (emb25-east);
+
+\draw [connection]  (model2-west) -- node {\midarrow} (emb26-east);
 
 \node[shift={(5,0,0)}] (input2) at (model2-east) {\includegraphics[width=4.0cm,height=12.0cm]{./input2.jpg}};
 \coordinate (input2-east) at (input2.east);
@@ -214,7 +306,7 @@
 \coordinate (input2-south) at (input2.south);
 \node[below=2pt, text centered, text width=4.0cm] at (input2.south) {\small \textcolor{black}{\bf  }};
 
-\draw [connection]  (input2-west)    -- node {\midarrow} (model2-east);
+\draw [connection]  (input2-west) -- node {\midarrow} (model2-east);
 
 \end{tikzpicture}
 \end{document}
